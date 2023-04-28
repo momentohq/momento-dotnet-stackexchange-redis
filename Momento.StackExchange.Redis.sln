@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C4B57B6D-AC05-4001-B048-322E00BCE0F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momento.StackExchange.Redis", "src\Momento.StackExchange.Redis\Momento.StackExchange.Redis.csproj", "{2613200B-ABD3-4E06-B5D4-0CF2D046CFD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F19848D6-0C4D-448F-8EC2-0A3962553421}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{97B1C75B-3AFB-4F8F-89A1-49DF676762EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momento.StackExchange.Redis.Tests", "tests\Integration\Momento.StackExchange.Redis.Tests\Momento.StackExchange.Redis.Tests.csproj", "{8CF17E8B-CAEC-4567-9FD4-0940808BCA2C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2613200B-ABD3-4E06-B5D4-0CF2D046CFD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2613200B-ABD3-4E06-B5D4-0CF2D046CFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2613200B-ABD3-4E06-B5D4-0CF2D046CFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2613200B-ABD3-4E06-B5D4-0CF2D046CFD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CF17E8B-CAEC-4567-9FD4-0940808BCA2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CF17E8B-CAEC-4567-9FD4-0940808BCA2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CF17E8B-CAEC-4567-9FD4-0940808BCA2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CF17E8B-CAEC-4567-9FD4-0940808BCA2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2613200B-ABD3-4E06-B5D4-0CF2D046CFD8} = {C4B57B6D-AC05-4001-B048-322E00BCE0F0}
+		{97B1C75B-3AFB-4F8F-89A1-49DF676762EA} = {F19848D6-0C4D-448F-8EC2-0A3962553421}
+		{8CF17E8B-CAEC-4567-9FD4-0940808BCA2C} = {97B1C75B-3AFB-4F8F-89A1-49DF676762EA}
+	EndGlobalSection
+EndGlobal
