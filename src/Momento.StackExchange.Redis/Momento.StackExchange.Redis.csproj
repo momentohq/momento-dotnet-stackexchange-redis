@@ -13,7 +13,7 @@
     <!-- Propagated from StackExchange.Redis; built into .NET core now -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
 
-    <!-- add the package conditional on target framework net461 -->
+    <!-- In netstandard2.0 but not .NET Framework -->
     <PackageReference Include="System.Net.Http" Version="4.3.4" Condition="'$(TargetFramework)' == 'net461'">
       <ExcludeAssets>true</ExcludeAssets>
     </PackageReference>
