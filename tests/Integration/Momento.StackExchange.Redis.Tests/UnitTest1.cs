@@ -1,10 +1,13 @@
+using Momento.StackExchange.Redis;
+
 namespace Momento.StackExchange.Redis.Tests;
 
 public class UnitTest1
 {
     [Fact]
-    public void Test1()
+    public void Get_StubInvocation_ThrowsException()
     {
-        Assert.True(true);
+        var database = new MomentoRedisDatabase();
+        Assert.Throws<NotImplementedException>(() => database.StringGet("key"));
     }
 }
