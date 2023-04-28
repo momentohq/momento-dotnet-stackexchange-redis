@@ -6,7 +6,14 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target-framework: net6.0
+          - os: windows-latest
+            target-framework: net461
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Setup repo
@@ -21,4 +28,4 @@ jobs:
         run: dotnet build
 
       - name: Test
-        run: dotnet test
+        run: dotnet test -f ${{ matrix.target-framework }}
