@@ -8,10 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Momento.Sdk" Version="1.11.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.104" />
 
-    <!-- Propagated from StackExchange.Redis; built into .NET core now -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+    <!-- Propagated from StackExchange.Redis; built into .NET core now.
+         We need version >= 6.0.0 for Momento.Sdk compatibility -->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 
     <!-- In netstandard2.0 but not .NET Framework -->
     <PackageReference Include="System.Net.Http" Version="4.3.4" Condition="'$(TargetFramework)' == 'net461'">
