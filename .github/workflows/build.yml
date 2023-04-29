@@ -8,12 +8,24 @@ jobs:
   test:
     strategy:
       matrix:
+        backend: [momento, redis]
         include:
           - os: ubuntu-latest
             target-framework: net6.0
           - os: windows-latest
             target-framework: net461
     runs-on: ${{ matrix.os }}
+
+    env:
+      TEST_AUTH_TOKEN: ${{ secrets.ALPHA_TEST_AUTH_TOKEN }}
+      TEST_CACHE_NAME: stackexchange-redis-${{ github.sha }}-${{ matrix.target-framework }}
+      USE_REDIS: ${{ matrix.backend == 'redis' }}
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
 
     steps:
       - name: Setup repo
