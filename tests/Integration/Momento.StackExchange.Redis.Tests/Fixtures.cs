@@ -1,9 +1,7 @@
-using System;
 using Microsoft.Extensions.Logging;
 using Momento.Sdk;
 using Momento.Sdk.Auth;
 using Momento.Sdk.Config;
-//using Momento.StackExchange.Redis;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis.Tests;

@@ -1,5 +1,3 @@
-using System;
-
 namespace Momento.StackExchange.Redis.Tests;
 
 public class Utils
