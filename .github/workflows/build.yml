@@ -42,7 +42,7 @@ jobs:
   # tests.
   # That is why this is a separate job.
   test-net-framework:
-    name: Test .NET Framework
+    name: Test .NET Framework (momento only)
     runs-on: windows-latest
 
     env:
