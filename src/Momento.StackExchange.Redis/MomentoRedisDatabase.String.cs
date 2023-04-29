@@ -1,3 +1,4 @@
+using Momento.Sdk.Responses;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
@@ -96,7 +97,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public RedisValue StringGet(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        return StringGetAsync(key, flags).Result;
     }
 
     public RedisValue[] StringGet(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
@@ -104,9 +105,25 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         throw new NotImplementedException();
     }
 
-    public Task<RedisValue> StringGetAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
+    public async Task<RedisValue> StringGetAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        var response = await Client.GetAsync(CacheName, key.ToString());
+        if (response is CacheGetResponse.Hit hit)
+        {
+            return hit.ValueString;
+        }
+        else if (response is CacheGetResponse.Miss)
+        {
+            return RedisValue.Null;
+        }
+        else if (response is CacheGetResponse.Error error)
+        {
+            throw new RedisServerException(error.Message);
+        }
+        else
+        {
+            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+        }
     }
 
     public Task<RedisValue[]> StringGetAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
@@ -256,7 +273,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry, When when)
     {
-        throw new NotImplementedException();
+        return StringSetAsync(key, value, expiry, when).Result;
     }
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
@@ -294,9 +311,26 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         throw new NotImplementedException();
     }
 
-    public Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when)
+    public async Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when)
     {
-        throw new NotImplementedException();
+        if (when != When.Always)
+        {
+            throw new NotImplementedException();
+        }
+
+        var response = await Client.SetAsync(CacheName, (string)key!, (string)value!, expiry);
+        if (response is CacheSetResponse.Success)
+        {
+            return true;
+        }
+        else if (response is CacheSetResponse.Error error)
+        {
+            throw new RedisException(error.Message, error.InnerException);
+        }
+        else
+        {
+            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+        }
     }
 
     public Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)

@@ -8,6 +8,7 @@ services:
       - ../..:/workspaces:cached
     environment:
       - TEST_AUTH_TOKEN
+      - TEST_CACHE_NAME
     network_mode: service:redis
     command: sleep infinity
 

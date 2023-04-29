@@ -9,6 +9,5 @@ using StackExchange.Redis;
  * This file forwards the types used in the interfaces to the
  * types in StackExchange.Redis.
  */
-
 [assembly: TypeForwardedTo(typeof(RedisKey))]
 [assembly: TypeForwardedTo(typeof(RedisValue))]

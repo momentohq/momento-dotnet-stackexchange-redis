@@ -1,13 +1,28 @@
 using System.Net;
+using Momento.Sdk;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
 
-public sealed partial class MomentoRedisDatabase : IDatabase
+public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
 {
+    private ICacheClient Client;
+    private string CacheName { get; set; }
+
     public IConnectionMultiplexer Multiplexer => throw new NotImplementedException();
 
-    int IDatabase.Database => throw new NotImplementedException();
+    int IDatabase.Database => 0;
+
+    public MomentoRedisDatabase(ICacheClient client, string cacheName)
+    {
+        Client = client;
+        CacheName = cacheName;
+    }
+
+    public void Dispose()
+    {
+        Client.Dispose();
+    }
 
     public IBatch CreateBatch(object? asyncState = null)
     {

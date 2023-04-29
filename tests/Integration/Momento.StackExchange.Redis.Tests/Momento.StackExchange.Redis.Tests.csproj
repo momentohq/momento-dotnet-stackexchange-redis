@@ -7,9 +7,17 @@
     <LangVersion>latest</LangVersion>
 
     <IsPackable>false</IsPackable>
+    <!-- We get some warnings for the logger (used only in the tests) on net461.
+         These are safe to ignore -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <!-- Because this assembly targets multiple versions, and the test runner runs
+         the target frameworks sequentially, we get spurious warnings about multiple
+         versions of dependencies -->
+    <NoWarn>MSB3277</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
