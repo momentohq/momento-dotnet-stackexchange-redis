@@ -10,14 +10,10 @@ jobs:
     strategy:
       matrix:
         backend: [momento, redis]
-        include:
-          - os: ubuntu-latest
-            target-framework: net6.0
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest
     env:
       TEST_AUTH_TOKEN: ${{ secrets.ALPHA_TEST_AUTH_TOKEN }}
-      TEST_CACHE_NAME: stackexchange-redis-${{ github.sha }}-${{ matrix.target-framework }}
+      TEST_CACHE_NAME: stackexchange-redis-${{ github.sha }}-net6.0
       USE_REDIS: ${{ matrix.backend == 'redis' }}
 
     services:
@@ -39,24 +35,19 @@ jobs:
         run: dotnet build
 
       - name: Test
-        run: dotnet test -f ${{ matrix.target-framework }}
+        run: dotnet test -f net6.0
 
   # Note: container services are only supported on Ubuntu, and we need to run
   # .NET Framework tests on Windows, so we cannot test Redis for the .NET Framework
   # tests.
   # That is why this is a separate job.
   test-net-framework:
-    name: Test .NET Framework 4.6.1
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            target-framework: net461
-    runs-on: ${{ matrix.os }}
+    name: Test .NET Framework
+    runs-on: windows-latest
 
     env:
       TEST_AUTH_TOKEN: ${{ secrets.ALPHA_TEST_AUTH_TOKEN }}
-      TEST_CACHE_NAME: stackexchange-redis-${{ github.sha }}-${{ matrix.target-framework }}
+      TEST_CACHE_NAME: stackexchange-redis-${{ github.sha }}-net-framework
 
     steps:
       - name: Setup repo
@@ -71,4 +62,4 @@ jobs:
         run: dotnet build
 
       - name: Test
-        run: dotnet test -f ${{ matrix.target-framework }}
+        run: dotnet test -f net461
