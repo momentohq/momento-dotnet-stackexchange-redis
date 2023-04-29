@@ -11,7 +11,14 @@ public class DatabaseFixture : IDisposable
     public IDatabase Database { get; private set; }
     private ICacheClient? Client;
     private string? CacheName;
-    private bool UseRedis = Environment.GetEnvironmentVariable("USE_REDIS") == "true";
+    private bool UseRedis
+    {
+        get
+        {
+            var useRedis = Environment.GetEnvironmentVariable("USE_REDIS");
+            return useRedis?.ToLower() == "true" || useRedis?.ToLower() == "1";
+        }
+    }
 
     public DatabaseFixture()
     {
