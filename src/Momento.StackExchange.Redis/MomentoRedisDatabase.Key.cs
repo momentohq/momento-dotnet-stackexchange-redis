@@ -31,6 +31,8 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         var response = await Client.DeleteAsync(CacheName, (string)key!);
         if (response is CacheDeleteResponse.Success)
         {
+            // TODO: Redis returns a boolean depending on if there was a key to delete or not.
+            // We have not implemented this, so we default to true.
             return true;
         }
         else if (response is CacheDeleteResponse.Error error)
