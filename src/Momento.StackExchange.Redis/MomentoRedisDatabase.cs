@@ -35,21 +35,19 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
         /// - <see cref="RedisConnectionException"/> is-a <see cref="RedisException"/>
         /// - <see cref="RedisTimeoutException"/> is-a <see cref="System.TimeoutException"/>
         /// - <see cref="RedisCommandException"/> is-a <see cref="Exception"/>
-        if (innerException is InvalidArgumentException)
+        switch (errorCode)
         {
-            return new RedisCommandException(message, innerException);
-        }
-        else if (errorCode == MomentoErrorCode.TIMEOUT_ERROR)
-        {
-            return new RedisTimeoutException(message, CommandStatus.Sent);
-        }
-        else if (errorCode != MomentoErrorCode.UNKNOWN_ERROR)
-        {
-            return new RedisServerException(message);
-        }
-        else
-        {
-            return new RedisException(message, innerException);
+            case MomentoErrorCode.INVALID_ARGUMENT_ERROR:
+                return new RedisCommandException(message, innerException);
+            case MomentoErrorCode.TIMEOUT_ERROR:
+                // We currently do not have a way to distinguish between a starved request
+                // on the client queue vs a timeout in flight or on the server.
+                // For now we default to the latter.
+                return new RedisTimeoutException(message, CommandStatus.Sent);
+            case MomentoErrorCode.UNKNOWN_ERROR:
+                return new RedisException(message, innerException);
+            default:
+                return new RedisServerException(message);
         }
     }
 
