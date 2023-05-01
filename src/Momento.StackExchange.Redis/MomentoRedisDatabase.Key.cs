@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Momento.Sdk.Responses;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
@@ -17,7 +18,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool KeyDelete(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        return KeyDeleteAsync(key, flags).Result;
     }
 
     public long KeyDelete(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
@@ -25,9 +26,21 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         throw new NotImplementedException();
     }
 
-    public Task<bool> KeyDeleteAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
+    public async Task<bool> KeyDeleteAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        var response = await Client.DeleteAsync(CacheName, (string)key!);
+        if (response is CacheDeleteResponse.Success)
+        {
+            return true;
+        }
+        else if (response is CacheDeleteResponse.Error error)
+        {
+            throw new RedisException(error.Message, error.InnerException);
+        }
+        else
+        {
+            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+        }
     }
 
     public Task<long> KeyDeleteAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)

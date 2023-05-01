@@ -6,9 +6,11 @@ namespace Momento.StackExchange.Redis.Tests;
 public class TestBase
 {
     protected readonly IDatabase db;
+    protected bool useRedis;
 
     public TestBase(DatabaseFixture fixture)
     {
-        this.db = fixture.Database;
+        db = fixture.Database;
+        useRedis = fixture.UseRedis;
     }
 }
