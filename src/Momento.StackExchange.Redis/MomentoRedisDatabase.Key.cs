@@ -18,7 +18,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool KeyDelete(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        return KeyDeleteAsync(key, flags).Result;
+        return AwaitTaskAndUnwrapException(KeyDeleteAsync(key, flags));
     }
 
     public long KeyDelete(RedisKey[] keys, CommandFlags flags = CommandFlags.None)

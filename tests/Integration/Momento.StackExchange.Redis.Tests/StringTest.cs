@@ -10,6 +10,18 @@ public class StringTest : TestBase
     }
 
     [Fact]
+    public void Get_MissingCache_ThrowsException()
+    {
+        if (useRedis)
+        {
+            return;
+        }
+
+        var db = new MomentoRedisDatabase(client!, Utils.GuidString());
+        Assert.Throws<RedisServerException>(() => db.StringGet(Utils.GuidString()));
+    }
+
+    [Fact]
     public void Get_MissingKey_HappyPath()
     {
         var result = db.StringGet(Utils.GuidString());

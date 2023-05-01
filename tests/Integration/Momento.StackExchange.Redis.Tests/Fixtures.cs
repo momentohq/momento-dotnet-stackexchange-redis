@@ -9,7 +9,7 @@ namespace Momento.StackExchange.Redis.Tests;
 public class DatabaseFixture : IDisposable
 {
     public IDatabase Database { get; private set; }
-    private ICacheClient? Client;
+    public ICacheClient? Client { get; private set; }
     private string? CacheName;
     public bool UseRedis
     {

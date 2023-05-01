@@ -63,6 +63,24 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
         return new RedisException($"Unexpected response type. Got {response.GetType().Name}");
     }
 
+    /// <summary>
+    /// Awaits a task, returns its value, and unwraps any exceptions.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="result"></param>
+    /// <returns></returns>
+    private T AwaitTaskAndUnwrapException<T>(Task<T> result)
+    {
+        try
+        {
+            return result.Result;
+        }
+        catch (AggregateException e)
+        {
+            throw e.InnerException;
+        }
+    }
+
     public void Dispose()
     {
         Client.Dispose();

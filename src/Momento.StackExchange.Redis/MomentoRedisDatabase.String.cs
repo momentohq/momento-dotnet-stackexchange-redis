@@ -97,7 +97,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public RedisValue StringGet(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        return StringGetAsync(key, flags).Result;
+        return AwaitTaskAndUnwrapException(StringGetAsync(key, flags));
     }
 
     public RedisValue[] StringGet(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
@@ -273,7 +273,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry, When when)
     {
-        return StringSetAsync(key, value, expiry, when).Result;
+        return AwaitTaskAndUnwrapException(StringSetAsync(key, value, expiry, when));
     }
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
