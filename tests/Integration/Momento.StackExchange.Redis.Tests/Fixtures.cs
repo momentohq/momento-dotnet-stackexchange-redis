@@ -11,7 +11,7 @@ public class DatabaseFixture : IDisposable
     public IDatabase Database { get; private set; }
     private ICacheClient? Client;
     private string? CacheName;
-    private bool UseRedis
+    public bool UseRedis
     {
         get
         {
