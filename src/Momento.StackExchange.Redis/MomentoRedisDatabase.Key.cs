@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;

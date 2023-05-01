@@ -20,9 +20,10 @@ clean:
 clean-build: clean restore build
 
 
-.PHONY: precommit
-## Run clean-build and test as a step before committing.
-precommit: clean-build test
+.PHONY: format
+## Format code
+format:
+	@dotnet format
 
 
 .PHONY: restore
@@ -35,6 +36,22 @@ restore:
 ## Run unit and integration tests
 test:
 	@dotnet test
+
+
+.PHONY: test-net6
+## Run unit and integration tests against .NET 6
+test-net6:
+	@dotnet test --framework net6.0
+
+
+.PHONY: precommit
+## Run clean-build, format, and test as a step before committing.
+precommit: clean-build format test
+
+
+.PHONY: precommit-net6
+## Run clean-build, format, and test as a step before committing.
+precommit-net6: clean-build format test-net6
 
 
 # See <https://gist.github.com/klmr/575726c7e05d8780505a> for explanation.

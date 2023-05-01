@@ -1,4 +1,4 @@
-namespace Momento.StackExchange.Redis.Tests;
+﻿namespace Momento.StackExchange.Redis.Tests;
 
 public class Utils
 {

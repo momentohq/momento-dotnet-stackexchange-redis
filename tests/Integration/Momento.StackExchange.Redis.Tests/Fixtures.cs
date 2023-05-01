@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Momento.Sdk;
 using Momento.Sdk.Auth;
 using Momento.Sdk.Config;
