@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Momento.Sdk;
+using Momento.Sdk.Exceptions;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
@@ -17,6 +18,49 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
     {
         Client = client;
         CacheName = cacheName;
+    }
+
+    /// <summary>
+    /// Converts a Momento Error to an exception in the StackExchange.Redis taxonomy.
+    /// </summary>
+    /// <param name="message">The human-readable error message.</param>
+    /// <param name="innerException">The concrete exception that was generated.</param>
+    /// <param name="errorCode">The <see cref="MomentoErrorCode"/> of the particular exception.</param>
+    /// <returns>An exception mapped to the StackExchange.Redis exception taxonomy.</returns>
+    private Exception ConvertMomentoErrorToRedisException(string message, Exception innerException, MomentoErrorCode errorCode)
+    {
+        /// The taxonomy here is all over the place:
+        /// - <see cref="RedisException"/> is-a <see cref="Exception"/>
+        /// - <see cref="RedisServerException"/> is-a <see cref="RedisException"/>
+        /// - <see cref="RedisConnectionException"/> is-a <see cref="RedisException"/>
+        /// - <see cref="RedisTimeoutException"/> is-a <see cref="System.TimeoutException"/>
+        /// - <see cref="RedisCommandException"/> is-a <see cref="Exception"/>
+        if (innerException is InvalidArgumentException)
+        {
+            return new RedisCommandException(message, innerException);
+        }
+        else if (errorCode == MomentoErrorCode.TIMEOUT_ERROR)
+        {
+            return new RedisTimeoutException(message, CommandStatus.Sent);
+        }
+        else if (errorCode != MomentoErrorCode.UNKNOWN_ERROR)
+        {
+            return new RedisServerException(message);
+        }
+        else
+        {
+            return new RedisException(message, innerException);
+        }
+    }
+
+    /// <summary>
+    /// Create an exception for an unexpected response type event.
+    /// </summary>
+    /// <param name="response">The object outside the domain of expected types.</param>
+    /// <returns>An exception object.</returns>
+    private RedisException CreateUnexpectedResponseException(object response)
+    {
+        return new RedisException($"Unexpected response type. Got {response.GetType().Name}");
     }
 
     public void Dispose()

@@ -118,11 +118,11 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheGetResponse.Error error)
         {
-            throw new RedisServerException(error.Message);
+            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
         }
         else
         {
-            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+            throw CreateUnexpectedResponseException(response);
         }
     }
 
@@ -325,11 +325,11 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheSetResponse.Error error)
         {
-            throw new RedisException(error.Message, error.InnerException);
+            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
         }
         else
         {
-            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+            throw CreateUnexpectedResponseException(response);
         }
     }
 
