@@ -32,16 +32,42 @@ restore:
 	@dotnet restore
 
 
-.PHONY: test
+.PHONY:
 ## Run unit and integration tests
-test:
-	@dotnet test
+test: test-net-framework test-net6
+
+.PHONY: test-net-framework
+## Run unit and integration tests against .NET6
+test-net-framework: test-net-framework-momento test-net-framework-redis
+
+
+.PHONY: test-net-framework-momento
+## Run unit and integration tests against .NET Framework backed by Momento
+test-net-framework-momento:
+	@dotnet test -f net461
+
+
+.PHONY: test-net-framework-redis
+## Run unit and integration tests against .NET Framework backed by Redis
+test-net-framework-redis:
+	@USE_REDIS=1 dotnet test -f net461
 
 
 .PHONY: test-net6
-## Run unit and integration tests against .NET 6
-test-net6:
-	@dotnet test --framework net6.0
+## Run unit and integration tests against .NET6
+test: test-net6-momento test-net6-redis
+
+
+.PHONY: test-net6-momento
+## Run unit and integration tests against .NET 6 backed by Momento
+test-net6-momento:
+	@dotnet test -f net6.0
+
+
+.PHONY: test-net6-redis
+## Run unit and integration tests against .NET 6 backed by Redis
+test-net6-redis:
+	@USE_REDIS=1 dotnet test -f net6.0
 
 
 .PHONY: precommit
