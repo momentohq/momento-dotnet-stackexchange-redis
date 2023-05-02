@@ -37,7 +37,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheDeleteResponse.Error error)
         {
-            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
+            throw ConvertMomentoErrorToRedisException(error);
         }
         else
         {

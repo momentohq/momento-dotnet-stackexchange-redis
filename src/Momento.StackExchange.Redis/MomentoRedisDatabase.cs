@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Momento.Sdk;
 using Momento.Sdk.Exceptions;
+using Momento.Sdk.Responses;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
@@ -23,11 +24,9 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
     /// <summary>
     /// Converts a Momento Error to an exception in the StackExchange.Redis taxonomy.
     /// </summary>
-    /// <param name="message">The human-readable error message.</param>
-    /// <param name="innerException">The concrete exception that was generated.</param>
-    /// <param name="errorCode">The <see cref="MomentoErrorCode"/> of the particular exception.</param>
+    /// <param name="error">The error response to convert.</param>
     /// <returns>An exception mapped to the StackExchange.Redis exception taxonomy.</returns>
-    private Exception ConvertMomentoErrorToRedisException(string message, Exception innerException, MomentoErrorCode errorCode)
+    private Exception ConvertMomentoErrorToRedisException(IError error)
     {
         /// The taxonomy here is all over the place:
         /// - <see cref="RedisException"/> is-a <see cref="Exception"/>
@@ -35,19 +34,19 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
         /// - <see cref="RedisConnectionException"/> is-a <see cref="RedisException"/>
         /// - <see cref="RedisTimeoutException"/> is-a <see cref="System.TimeoutException"/>
         /// - <see cref="RedisCommandException"/> is-a <see cref="Exception"/>
-        switch (errorCode)
+        switch (error.ErrorCode)
         {
             case MomentoErrorCode.INVALID_ARGUMENT_ERROR:
-                return new RedisCommandException(message, innerException);
+                return new RedisCommandException(error.Message, error.InnerException);
             case MomentoErrorCode.TIMEOUT_ERROR:
                 // We currently do not have a way to distinguish between a starved request
                 // on the client queue vs a timeout in flight or on the server.
                 // For now we default to the latter.
-                return new RedisTimeoutException(message, CommandStatus.Sent);
+                return new RedisTimeoutException(error.Message, CommandStatus.Sent);
             case MomentoErrorCode.UNKNOWN_ERROR:
-                return new RedisException(message, innerException);
+                return new RedisException(error.Message, error.InnerException);
             default:
-                return new RedisServerException(message);
+                return new RedisServerException(error.Message);
         }
     }
 
