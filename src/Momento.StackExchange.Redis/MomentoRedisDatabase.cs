@@ -10,6 +10,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
 {
     private ICacheClient Client;
     private string CacheName { get; set; }
+    private static readonly string NOT_YET_SUPPORTED_FORMAT_STRING = "{0} is not yet supported in MomentoRedisClient. Please drop by our Discord at https://discord.com/invite/3HkAKjUZGq , or contact us at support@momentohq.com, and let us know what APIs you need!";
 
     public IConnectionMultiplexer Multiplexer => throw new NotImplementedException();
 
@@ -78,6 +79,10 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
         }
     }
 
+    private string BuildNotYetSupportedMessage(string thingNotSupported) => String.Format(NOT_YET_SUPPORTED_FORMAT_STRING, thingNotSupported);
+
+    private NotImplementedException BuildCommandNotImplementedException(string name) => new NotImplementedException(BuildNotYetSupportedMessage($"Command {name}"));
+
     public void Dispose()
     {
         Client.Dispose();
@@ -85,166 +90,166 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
 
     public IBatch CreateBatch(object? asyncState = null)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("CreateBatch");
     }
 
     public ITransaction CreateTransaction(object? asyncState = null)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("CreateTransaction");
     }
 
     public RedisValue DebugObject(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("DebugObject");
     }
 
     public Task<RedisValue> DebugObjectAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("DebugObjectAsync");
     }
 
     public RedisResult Execute(string command, params object[] args)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("Execute");
     }
 
     public RedisResult Execute(string command, ICollection<object> args, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("Execute");
     }
 
     public Task<RedisResult> ExecuteAsync(string command, params object[] args)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ExecuteAsync");
     }
 
     public Task<RedisResult> ExecuteAsync(string command, ICollection<object>? args, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ExecuteAsync");
     }
 
     public EndPoint? IdentifyEndpoint(RedisKey key = default, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("IdentifyEndpoint");
     }
 
     public Task<EndPoint?> IdentifyEndpointAsync(RedisKey key = default, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("IdentifyEndpointAsync");
     }
 
     public bool IsConnected(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("IsConnected");
     }
 
     public TimeSpan Ping(CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("Ping");
     }
 
     public Task<TimeSpan> PingAsync(CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("PingAsync");
     }
 
     public long Publish(RedisChannel channel, RedisValue message, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("Publish");
     }
 
     public Task<long> PublishAsync(RedisChannel channel, RedisValue message, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("PublishAsync");
     }
 
     public RedisResult ScriptEvaluate(string script, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluate");
     }
 
     public RedisResult ScriptEvaluate(byte[] hash, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluate");
     }
 
     public RedisResult ScriptEvaluate(LuaScript script, object? parameters = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluate");
     }
 
     public RedisResult ScriptEvaluate(LoadedLuaScript script, object? parameters = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluate");
     }
 
     public Task<RedisResult> ScriptEvaluateAsync(string script, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateAsync");
     }
 
     public Task<RedisResult> ScriptEvaluateAsync(byte[] hash, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateAsync");
     }
 
     public Task<RedisResult> ScriptEvaluateAsync(LuaScript script, object? parameters = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateAsync");
     }
 
     public Task<RedisResult> ScriptEvaluateAsync(LoadedLuaScript script, object? parameters = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateAsync");
     }
 
     public RedisResult ScriptEvaluateReadOnly(string script, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateReadOnly");
     }
 
     public RedisResult ScriptEvaluateReadOnly(byte[] hash, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateReadOnly");
     }
 
     public Task<RedisResult> ScriptEvaluateReadOnlyAsync(string script, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateReadOnlyAsync");
     }
 
     public Task<RedisResult> ScriptEvaluateReadOnlyAsync(byte[] hash, RedisKey[]? keys = null, RedisValue[]? values = null, CommandFlags flags = CommandFlags.None)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("ScriptEvaluateReadOnlyAsync");
     }
 
     public bool TryWait(Task task)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("TryWait");
     }
 
     public void Wait(Task task)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("Wait");
     }
 
     public T Wait<T>(Task<T> task)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("Wait");
     }
 
     public void WaitAll(params Task[] tasks)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("WaitAll");
     }
 
     EndPoint? IDatabase.IdentifyEndpoint(RedisKey key, CommandFlags flags)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("IdentifyEndpoint");
     }
 
     Task<EndPoint?> IDatabaseAsync.IdentifyEndpointAsync(RedisKey key, CommandFlags flags)
     {
-        throw new NotImplementedException();
+        throw BuildCommandNotImplementedException("IdentifyEndpointAsync");
     }
 }
