@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Momento.Sdk;
+using Momento.Sdk.Exceptions;
 using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
@@ -17,6 +18,65 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
     {
         Client = client;
         CacheName = cacheName;
+    }
+
+    /// <summary>
+    /// Converts a Momento Error to an exception in the StackExchange.Redis taxonomy.
+    /// </summary>
+    /// <param name="message">The human-readable error message.</param>
+    /// <param name="innerException">The concrete exception that was generated.</param>
+    /// <param name="errorCode">The <see cref="MomentoErrorCode"/> of the particular exception.</param>
+    /// <returns>An exception mapped to the StackExchange.Redis exception taxonomy.</returns>
+    private Exception ConvertMomentoErrorToRedisException(string message, Exception innerException, MomentoErrorCode errorCode)
+    {
+        /// The taxonomy here is all over the place:
+        /// - <see cref="RedisException"/> is-a <see cref="Exception"/>
+        /// - <see cref="RedisServerException"/> is-a <see cref="RedisException"/>
+        /// - <see cref="RedisConnectionException"/> is-a <see cref="RedisException"/>
+        /// - <see cref="RedisTimeoutException"/> is-a <see cref="System.TimeoutException"/>
+        /// - <see cref="RedisCommandException"/> is-a <see cref="Exception"/>
+        switch (errorCode)
+        {
+            case MomentoErrorCode.INVALID_ARGUMENT_ERROR:
+                return new RedisCommandException(message, innerException);
+            case MomentoErrorCode.TIMEOUT_ERROR:
+                // We currently do not have a way to distinguish between a starved request
+                // on the client queue vs a timeout in flight or on the server.
+                // For now we default to the latter.
+                return new RedisTimeoutException(message, CommandStatus.Sent);
+            case MomentoErrorCode.UNKNOWN_ERROR:
+                return new RedisException(message, innerException);
+            default:
+                return new RedisServerException(message);
+        }
+    }
+
+    /// <summary>
+    /// Create an exception for an unexpected response type event.
+    /// </summary>
+    /// <param name="response">The object outside the domain of expected types.</param>
+    /// <returns>An exception object.</returns>
+    private RedisException CreateUnexpectedResponseException(object response)
+    {
+        return new RedisException($"Unexpected response type. Got {response.GetType().Name}");
+    }
+
+    /// <summary>
+    /// Awaits a task, returns its value, and unwraps any exceptions.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="result"></param>
+    /// <returns></returns>
+    private T AwaitTaskAndUnwrapException<T>(Task<T> result)
+    {
+        try
+        {
+            return result.Result;
+        }
+        catch (AggregateException e)
+        {
+            throw e.InnerException;
+        }
     }
 
     public void Dispose()

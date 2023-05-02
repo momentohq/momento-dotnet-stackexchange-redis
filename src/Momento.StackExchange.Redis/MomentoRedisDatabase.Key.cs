@@ -18,7 +18,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool KeyDelete(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        return KeyDeleteAsync(key, flags).Result;
+        return AwaitTaskAndUnwrapException(KeyDeleteAsync(key, flags));
     }
 
     public long KeyDelete(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
@@ -37,11 +37,11 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheDeleteResponse.Error error)
         {
-            throw new RedisException(error.Message, error.InnerException);
+            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
         }
         else
         {
-            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+            throw CreateUnexpectedResponseException(response);
         }
     }
 

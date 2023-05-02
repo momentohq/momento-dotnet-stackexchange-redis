@@ -32,7 +32,7 @@ restore:
 	@dotnet restore
 
 
-.PHONY:
+.PHONY: test
 ## Run unit and integration tests
 test: test-net-framework test-net6
 
@@ -55,7 +55,7 @@ test-net-framework-redis:
 
 .PHONY: test-net6
 ## Run unit and integration tests against .NET6
-test: test-net6-momento test-net6-redis
+test-net6: test-net6-momento test-net6-redis
 
 
 .PHONY: test-net6-momento

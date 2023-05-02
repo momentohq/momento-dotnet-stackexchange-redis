@@ -97,7 +97,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public RedisValue StringGet(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
-        return StringGetAsync(key, flags).Result;
+        return AwaitTaskAndUnwrapException(StringGetAsync(key, flags));
     }
 
     public RedisValue[] StringGet(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
@@ -118,11 +118,11 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheGetResponse.Error error)
         {
-            throw new RedisServerException(error.Message);
+            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
         }
         else
         {
-            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+            throw CreateUnexpectedResponseException(response);
         }
     }
 
@@ -273,7 +273,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry, When when)
     {
-        return StringSetAsync(key, value, expiry, when).Result;
+        return AwaitTaskAndUnwrapException(StringSetAsync(key, value, expiry, when));
     }
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
@@ -325,11 +325,11 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheSetResponse.Error error)
         {
-            throw new RedisException(error.Message, error.InnerException);
+            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
         }
         else
         {
-            throw new RedisServerException($"Unexpected response type. Got {response.GetType().Name}");
+            throw CreateUnexpectedResponseException(response);
         }
     }
 
