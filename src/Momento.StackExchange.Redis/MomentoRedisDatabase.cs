@@ -6,14 +6,14 @@ using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
 
-public sealed partial class MomentoRedisDatabase : IDatabase, IDisposable
+public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatabase, IDisposable
 {
     private ICacheClient Client;
     private string CacheName { get; set; }
 
     public IConnectionMultiplexer Multiplexer => throw new NotImplementedException();
 
-    int IDatabase.Database => 0;
+    public int Database => 0;
 
     public MomentoRedisDatabase(ICacheClient client, string cacheName)
     {
