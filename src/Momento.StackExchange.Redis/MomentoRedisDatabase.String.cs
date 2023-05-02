@@ -118,7 +118,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheGetResponse.Error error)
         {
-            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
+            throw ConvertMomentoErrorToRedisException(error);
         }
         else
         {
@@ -325,7 +325,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         }
         else if (response is CacheSetResponse.Error error)
         {
-            throw ConvertMomentoErrorToRedisException(error.Message, error.InnerException, error.ErrorCode);
+            throw ConvertMomentoErrorToRedisException(error);
         }
         else
         {
