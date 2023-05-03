@@ -168,6 +168,60 @@ public class StringTest : TestBase
     }
 
     [Fact]
+    public void StringSet_WhenNotExistsAndKeyMissing_WasStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var result = db.StringSet(key, value, when: When.NotExists);
+        Assert.True(result);
+
+        var storedValue = db.StringGet(key);
+        Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
+    public async Task StringSetAsync_WhenNotExistsAndKeyMissing_WasStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var result = await db.StringSetAsync(key, value, when: When.NotExists);
+        Assert.True(result);
+
+        var storedValue = await db.StringGetAsync(key);
+        Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
+    public void StringSet_WhenNotExistsAndKeyExists_WasntStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        db.StringSet(key, value);
+
+        var newValue = Utils.GuidString();
+        var result = db.StringSet(key, newValue, when: When.NotExists);
+        Assert.False(result);
+
+        var storedValue = db.StringGet(key);
+        Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
+    public async Task StringSetAsync_WhenNotExistsAndKeyExists_WasntStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        await db.StringSetAsync(key, value);
+
+        var newValue = Utils.GuidString();
+        var result = await db.StringSetAsync(key, newValue, when: When.NotExists);
+        Assert.False(result);
+
+        var storedValue = await db.StringGetAsync(key);
+        Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
     public void KeyDelete_MissingKey_HappyPath()
     {
         var key = Utils.GuidString();
