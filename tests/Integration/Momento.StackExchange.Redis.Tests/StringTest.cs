@@ -72,6 +72,37 @@ public class StringTest : TestBase
     }
 
     [Fact]
+    public void StringSet_KeepTtl_ThrowsException()
+    {
+        if (useRedis)
+        {
+            return;
+        }
+
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var exception = Record.Exception(() => db.StringSet(key, value, keepTtl: true));
+        Assert.IsType<NotImplementedException>(exception);
+        // Note that because we delegate synchronous calls to asynchronous calls, the exception message will be that of the asynchronous call.
+        Assert.StartsWith("Command StringSetAsync with keepTtl=true is not yet supported in MomentoRedisClient", exception.Message);
+    }
+
+    [Fact]
+    public async Task StringSetAsync_KeepTtl_ThrowsException()
+    {
+        if (useRedis)
+        {
+            return;
+        }
+
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var exception = await Record.ExceptionAsync(() => db.StringSetAsync(key, value, keepTtl: true));
+        Assert.IsType<NotImplementedException>(exception);
+        Assert.StartsWith("Command StringSetAsync with keepTtl=true is not yet supported in MomentoRedisClient", exception.Message);
+    }
+
+    [Fact]
     public void StringSet_WhenExists_ThrowsException()
     {
         if (useRedis)
