@@ -28,6 +28,8 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public async Task<bool> KeyDeleteAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
+        WarnOnFireAndForget(flags);
+
         var response = await Client.DeleteAsync(CacheName, (string)key!);
         if (response is CacheDeleteResponse.Success)
         {

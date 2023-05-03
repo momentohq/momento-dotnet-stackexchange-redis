@@ -1,5 +1,4 @@
-﻿using System.Net;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 namespace Momento.StackExchange.Redis;
 
 public interface IMomentoRedisDatabase

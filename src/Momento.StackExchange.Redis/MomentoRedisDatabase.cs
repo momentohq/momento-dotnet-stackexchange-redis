@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Momento.Sdk;
 using Momento.Sdk.Exceptions;
 using Momento.Sdk.Responses;
@@ -11,15 +13,17 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
     private ICacheClient Client;
     private string CacheName { get; set; }
     private static readonly string NOT_YET_SUPPORTED_FORMAT_STRING = "{0} is not yet supported in MomentoRedisClient. Please drop by our Discord at https://discord.com/invite/3HkAKjUZGq , or contact us at support@momentohq.com, and let us know what APIs you need!";
+    private ILogger logger;
 
     public IConnectionMultiplexer Multiplexer => throw new NotImplementedException();
 
     public int Database => 0;
 
-    public MomentoRedisDatabase(ICacheClient client, string cacheName)
+    public MomentoRedisDatabase(ICacheClient client, string cacheName, LoggerFactory? loggerFactory = null)
     {
         Client = client;
         CacheName = cacheName;
+        logger = loggerFactory?.CreateLogger<MomentoRedisDatabase>() ?? NullLoggerFactory.Instance.CreateLogger<MomentoRedisDatabase>();
     }
 
     /// <summary>
@@ -82,6 +86,37 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
     private string BuildNotYetSupportedMessage(string thingNotSupported) => String.Format(NOT_YET_SUPPORTED_FORMAT_STRING, thingNotSupported);
 
     private NotImplementedException BuildCommandNotImplementedException(string name) => new NotImplementedException(BuildNotYetSupportedMessage($"Command {name}"));
+
+    /// <summary>
+    /// Warns if the flags are set to FireAndForget, as this is not supported.
+    /// 
+    /// <remarks>
+    /// This is a flag that probably predates the async/await pattern, and is not
+    /// supported by MomentoRedisClient.
+    /// </summary>
+    /// <param name="flags"></param>
+    private void WarnOnFireAndForget(CommandFlags? flags = null)
+    {
+        if (flags.HasValue && flags == CommandFlags.FireAndForget)
+        {
+            logger.LogWarning("CommandFlags.FireAndForget is not supported in MomentoRedisClient. This command will be executed as request-response.");
+        }
+    }
+
+    /// <summary>
+    /// Ensure that the <see cref="When"/> parameter is not <see cref="When.Exists"/>, 
+    /// as this is not supported.
+    /// </summary>
+    /// <param name="when"></param>
+    /// <param name="name">Name of the method to write to the </param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void AssertStringWhenImplemented(When when, string name)
+    {
+        if (when == When.Exists)
+        {
+            throw BuildCommandNotImplementedException($"{name} with When.Exists");
+        }
+    }
 
     public void Dispose()
     {

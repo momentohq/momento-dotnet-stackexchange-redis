@@ -107,6 +107,8 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public async Task<RedisValue> StringGetAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
     {
+        WarnOnFireAndForget(flags);
+
         var response = await Client.GetAsync(CacheName, key.ToString());
         if (response is CacheGetResponse.Hit hit)
         {
@@ -313,10 +315,7 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public async Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when)
     {
-        if (when != When.Always)
-        {
-            throw new NotImplementedException();
-        }
+        AssertStringWhenImplemented(when, "StringSetAsync");
 
         var response = await Client.SetAsync(CacheName, (string)key!, (string)value!, expiry);
         if (response is CacheSetResponse.Success)

@@ -10,7 +10,7 @@ public class StringTest : TestBase
     }
 
     [Fact]
-    public void Get_MissingCache_ThrowsException()
+    public void StringGet_MissingCache_ThrowsException()
     {
         if (useRedis)
         {
@@ -22,7 +22,7 @@ public class StringTest : TestBase
     }
 
     [Fact]
-    public async Task GetAsync_MissingCache_ThrowsException()
+    public async Task StringGetAsync_MissingCache_ThrowsException()
     {
         if (useRedis)
         {
@@ -34,21 +34,21 @@ public class StringTest : TestBase
     }
 
     [Fact]
-    public void Get_MissingKey_HappyPath()
+    public void StringGet_MissingKey_HappyPath()
     {
         var result = db.StringGet(Utils.GuidString());
         Assert.True(result.IsNull);
     }
 
     [Fact]
-    public async Task GetAsync_MissingKey_HappyPath()
+    public async Task StringGetAsync_MissingKey_HappyPath()
     {
         var result = await db.StringGetAsync(Utils.GuidString());
         Assert.True(result.IsNull);
     }
 
     [Fact]
-    public void Set_NoExpiry_HappyPath()
+    public void StringSet_NoExpiry_HappyPath()
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
@@ -60,7 +60,7 @@ public class StringTest : TestBase
     }
 
     [Fact]
-    public async Task SetAsync_NoExpiry_HappyPath()
+    public async Task StringSetAsync_NoExpiry_HappyPath()
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
@@ -72,7 +72,38 @@ public class StringTest : TestBase
     }
 
     [Fact]
-    public void SetAsync_HasExpiryAndExpires_HappyPath()
+    public void StringSet_WhenExists_ThrowsException()
+    {
+        if (useRedis)
+        {
+            return;
+        }
+
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var exception = Record.Exception(() => db.StringSet(key, value, null, When.Exists));
+        Assert.IsType<NotImplementedException>(exception);
+        // Note that because we delegate synchronous calls to asynchronous calls, the exception message will be that of the asynchronous call.
+        Assert.StartsWith("Command StringSetAsync with When.Exists is not yet supported in MomentoRedisClient", exception.Message);
+    }
+
+    [Fact]
+    public async Task StringSetAsync_WhenExists_ThrowsException()
+    {
+        if (useRedis)
+        {
+            return;
+        }
+
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var exception = await Record.ExceptionAsync(() => db.StringSetAsync(key, value, null, When.Exists));
+        Assert.IsType<NotImplementedException>(exception);
+        Assert.StartsWith("Command StringSetAsync with When.Exists is not yet supported in MomentoRedisClient", exception.Message);
+    }
+
+    [Fact]
+    public void StringSet_HasExpiryAndExpires_HappyPath()
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
@@ -89,7 +120,7 @@ public class StringTest : TestBase
     }
 
     [Fact]
-    public async Task SetAsync_HasExpiryAndExpires_HappyPathAsync()
+    public async Task StringSetAsync_HasExpiryAndExpires_HappyPath()
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
