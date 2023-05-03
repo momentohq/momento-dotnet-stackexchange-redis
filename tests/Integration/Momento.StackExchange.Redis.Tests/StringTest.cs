@@ -52,7 +52,7 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = db.StringSet(key, value, null, When.Always);
+        var result = db.StringSet(key, value);
         Assert.True(result);
 
         var storedValue = db.StringGet(key);
@@ -64,11 +64,42 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = await db.StringSetAsync(key, value, null, When.Always);
+        var result = await db.StringSetAsync(key, value);
         Assert.True(result);
 
         var storedValue = await db.StringGetAsync(key);
         Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
+    public void StringSet_KeepTtl_ThrowsException()
+    {
+        if (useRedis)
+        {
+            return;
+        }
+
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var exception = Record.Exception(() => db.StringSet(key, value, keepTtl: true));
+        Assert.IsType<NotImplementedException>(exception);
+        // Note that because we delegate synchronous calls to asynchronous calls, the exception message will be that of the asynchronous call.
+        Assert.StartsWith("Command StringSetAsync with keepTtl=true is not yet supported in MomentoRedisClient", exception.Message);
+    }
+
+    [Fact]
+    public async Task StringSetAsync_KeepTtl_ThrowsException()
+    {
+        if (useRedis)
+        {
+            return;
+        }
+
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var exception = await Record.ExceptionAsync(() => db.StringSetAsync(key, value, keepTtl: true));
+        Assert.IsType<NotImplementedException>(exception);
+        Assert.StartsWith("Command StringSetAsync with keepTtl=true is not yet supported in MomentoRedisClient", exception.Message);
     }
 
     [Fact]
@@ -81,7 +112,7 @@ public class StringTest : TestBase
 
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var exception = Record.Exception(() => db.StringSet(key, value, null, When.Exists));
+        var exception = Record.Exception(() => db.StringSet(key, value, when: When.Exists));
         Assert.IsType<NotImplementedException>(exception);
         // Note that because we delegate synchronous calls to asynchronous calls, the exception message will be that of the asynchronous call.
         Assert.StartsWith("Command StringSetAsync with When.Exists is not yet supported in MomentoRedisClient", exception.Message);
@@ -97,7 +128,7 @@ public class StringTest : TestBase
 
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var exception = await Record.ExceptionAsync(() => db.StringSetAsync(key, value, null, When.Exists));
+        var exception = await Record.ExceptionAsync(() => db.StringSetAsync(key, value, when: When.Exists));
         Assert.IsType<NotImplementedException>(exception);
         Assert.StartsWith("Command StringSetAsync with When.Exists is not yet supported in MomentoRedisClient", exception.Message);
     }
@@ -107,7 +138,7 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = db.StringSet(key, value, TimeSpan.FromSeconds(5), When.Always);
+        var result = db.StringSet(key, value, TimeSpan.FromSeconds(5));
         Assert.True(result);
 
         var storedValue = db.StringGet(key);
@@ -124,7 +155,7 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = await db.StringSetAsync(key, value, TimeSpan.FromSeconds(5), When.Always);
+        var result = await db.StringSetAsync(key, value, TimeSpan.FromSeconds(5));
         Assert.True(result);
 
         var storedValue = await db.StringGetAsync(key);
@@ -134,6 +165,60 @@ public class StringTest : TestBase
 
         storedValue = await db.StringGetAsync(key);
         Assert.True(storedValue.IsNull);
+    }
+
+    [Fact]
+    public void StringSet_WhenNotExistsAndKeyMissing_WasStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var result = db.StringSet(key, value, when: When.NotExists);
+        Assert.True(result);
+
+        var storedValue = db.StringGet(key);
+        Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
+    public async Task StringSetAsync_WhenNotExistsAndKeyMissing_WasStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        var result = await db.StringSetAsync(key, value, when: When.NotExists);
+        Assert.True(result);
+
+        var storedValue = await db.StringGetAsync(key);
+        Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
+    public void StringSet_WhenNotExistsAndKeyExists_WasntStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        db.StringSet(key, value);
+
+        var newValue = Utils.GuidString();
+        var result = db.StringSet(key, newValue, when: When.NotExists);
+        Assert.False(result);
+
+        var storedValue = db.StringGet(key);
+        Assert.Equal(value, storedValue);
+    }
+
+    [Fact]
+    public async Task StringSetAsync_WhenNotExistsAndKeyExists_WasntStored()
+    {
+        var key = Utils.GuidString();
+        var value = Utils.GuidString();
+        await db.StringSetAsync(key, value);
+
+        var newValue = Utils.GuidString();
+        var result = await db.StringSetAsync(key, newValue, when: When.NotExists);
+        Assert.False(result);
+
+        var storedValue = await db.StringGetAsync(key);
+        Assert.Equal(value, storedValue);
     }
 
     [Fact]
@@ -193,7 +278,7 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = db.StringSet(key, value, null, When.Always);
+        var result = db.StringSet(key, value);
         Assert.True(result);
 
         // Verify key is there
@@ -213,7 +298,7 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = await db.StringSetAsync(key, value, null, When.Always);
+        var result = await db.StringSetAsync(key, value);
         Assert.True(result);
 
         // Verify key is there
