@@ -280,12 +280,12 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
     {
-        throw BuildCommandNotImplementedException("StringSet");
+        return AwaitTaskAndUnwrapException(StringSetAsync(key, value, expiry, when, flags));
     }
 
     public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
     {
-        throw BuildCommandNotImplementedException("StringSet");
+        return AwaitTaskAndUnwrapException(StringSetAsync(key, value, expiry, keepTtl, when, flags));
     }
 
     public bool StringSet(KeyValuePair<RedisKey, RedisValue>[] values, When when = When.Always, CommandFlags flags = CommandFlags.None)
@@ -315,8 +315,58 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public async Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when)
     {
-        AssertStringWhenImplemented(when, "StringSetAsync");
+        return await StringSetAsync(key, value, expiry, keepTtl: false, when: when, flags: CommandFlags.None);
+    }
 
+    public async Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
+    {
+        return await StringSetAsync(key, value, expiry, keepTtl: false, when: when, flags: flags);
+    }
+
+    public async Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
+    {
+        WarnOnFireAndForget(flags);
+        AssertStringWhenImplemented(when, "StringSetAsync");
+        if (keepTtl)
+        {
+            throw BuildCommandNotImplementedException("StringSetAsync with keepTtl=true");
+        }
+
+        if (when == When.NotExists)
+        {
+            return await SetIfNotExistsAsync(key, value, expiry);
+        }
+        else
+        {
+            // Note that we don't need to check for When.Exists because the guard
+            // already excludes that case.
+            return await SetAlwaysAsync(key, value, expiry);
+        }
+    }
+
+    private async Task<bool> SetIfNotExistsAsync(RedisKey key, RedisValue value, TimeSpan? expiry)
+    {
+        var response = await Client.SetIfNotExistsAsync(CacheName, (string)key!, (string)value!, expiry);
+        if (response is CacheSetIfNotExistsResponse.Stored)
+        {
+            return true;
+        }
+        else if (response is CacheSetIfNotExistsResponse.NotStored)
+        {
+            return false;
+        }
+        else if (response is CacheSetIfNotExistsResponse.Error error)
+        {
+            throw ConvertMomentoErrorToRedisException(error);
+        }
+        else
+        {
+            throw CreateUnexpectedResponseException(response);
+        }
+    }
+
+    private async Task<bool> SetAlwaysAsync(RedisKey key, RedisValue value, TimeSpan? expiry)
+    {
         var response = await Client.SetAsync(CacheName, (string)key!, (string)value!, expiry);
         if (response is CacheSetResponse.Success)
         {
@@ -330,16 +380,6 @@ public sealed partial class MomentoRedisDatabase : IDatabase
         {
             throw CreateUnexpectedResponseException(response);
         }
-    }
-
-    public Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
-    {
-        throw BuildCommandNotImplementedException("StringSetAsync");
-    }
-
-    public Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
-    {
-        throw BuildCommandNotImplementedException("StringSetAsync");
     }
 
     public Task<bool> StringSetAsync(KeyValuePair<RedisKey, RedisValue>[] values, When when = When.Always, CommandFlags flags = CommandFlags.None)
