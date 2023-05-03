@@ -278,7 +278,7 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = db.StringSet(key, value, null, When.Always);
+        var result = db.StringSet(key, value);
         Assert.True(result);
 
         // Verify key is there
@@ -298,7 +298,7 @@ public class StringTest : TestBase
     {
         var key = Utils.GuidString();
         var value = Utils.GuidString();
-        var result = await db.StringSetAsync(key, value, null, When.Always);
+        var result = await db.StringSetAsync(key, value);
         Assert.True(result);
 
         // Verify key is there
