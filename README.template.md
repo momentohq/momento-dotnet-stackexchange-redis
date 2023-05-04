@@ -36,13 +36,12 @@ var db = connectionMultiplexer.GetDatabase();
 <td width="50%">
 
 ```csharp
-// Import the Momento redis compatibility client.
 using System;
 using Momento.Auth;
 using Momento.Config;
 using Momento.Sdk;
 using Momento.StackExchange.Redis;
-// Initialize Momento's client.
+// Create a Momento-backed Redis client
 var db = MomentoRedisDatabase(
   new CacheClient(
     config: Configurations.Laptop.v1(),
@@ -80,8 +79,8 @@ The examples will utlize your auth token via the environment variable `MOMENTO_A
 ### Basic example
 
 In the [`examples/Basic`](./examples/Basic) directory, you will find a simple CLI app that does some basic sets and gets
-on string values. You can pass the `--momento` flag to run against Momento, or the `--redis` flag to run against
-a local Redis (defaults to 127.0.0.0:6379 and is configurable).
+on string values. You can pass the `momento` verb to run against Momento, or the `redis` verb to run against
+a local Redis (defaults to `127.0.0.0:6379` and is configurable).
 
 You can run the example via `dotnet run`. To pass CLI options you will need to pass an extra `--` to tell `dotnet` that
 the following options should be passed through.
@@ -91,7 +90,7 @@ Here's an example run against Momento Cache:
 ```bash
 cd examples/Basic
 export MOMENTO_AUTH_TOKEN=<your momento auth token goes here>
-dotnet run -- momento -a $MOMENTO_AUTH_TOKEN -c cache
+dotnet run -- momento -t $MOMENTO_AUTH_TOKEN -c cache
 ```
 
 And the output should look something like this:
@@ -130,10 +129,10 @@ letting you know that the method is not implemented yet.
 
 If you'd like compile-time checking to tell you if you are using any APIs that we don't yet
 support, we provide our own `IMomentoRedisDatabase` interface, which is a fully compatible subset of the official `StackExchange.Redis`
-interface `IDatabase` but explicitly lists out the APIs that we currently support.
+interface `IDatabase`, but explicitly lists out the APIs that we currently support.
 
-So, you can make a one-line change to your constructor call and get back an instance of this interface instead of the
-default `StackExchange.Redis` interface, and then the C# compiler will catch any calls that your code is making to Redis
+With a one-line change to your constructor call, you get back an instance of this interface instead of the
+default `StackExchange.Redis` interface. Then the C# compiler will catch any calls your code is making to Redis
 API methods that we don't yet support, so you'll know before you even try to run the code.
 
 All you need to do is type the `MomentoRedisDatabase` object we instantiated above as
