@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Momento.Sdk;
@@ -29,16 +32,18 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
     /// <summary>
     /// Converts a Momento Error to an exception in the StackExchange.Redis taxonomy.
     /// </summary>
+    /// <remarks>
+    /// The taxonomy here is all over the place:
+    /// - <see cref="RedisException"/> is-a <see cref="Exception"/>
+    /// - <see cref="RedisServerException"/> is-a <see cref="RedisException"/>
+    /// - <see cref="RedisConnectionException"/> is-a <see cref="RedisException"/>
+    /// - <see cref="RedisTimeoutException"/> is-a <see cref="System.TimeoutException"/>
+    /// - <see cref="RedisCommandException"/> is-a <see cref="Exception"/>
+    /// </remarks>
     /// <param name="error">The error response to convert.</param>
     /// <returns>An exception mapped to the StackExchange.Redis exception taxonomy.</returns>
     private Exception ConvertMomentoErrorToRedisException(IError error)
     {
-        /// The taxonomy here is all over the place:
-        /// - <see cref="RedisException"/> is-a <see cref="Exception"/>
-        /// - <see cref="RedisServerException"/> is-a <see cref="RedisException"/>
-        /// - <see cref="RedisConnectionException"/> is-a <see cref="RedisException"/>
-        /// - <see cref="RedisTimeoutException"/> is-a <see cref="System.TimeoutException"/>
-        /// - <see cref="RedisCommandException"/> is-a <see cref="Exception"/>
         switch (error.ErrorCode)
         {
             case MomentoErrorCode.INVALID_ARGUMENT_ERROR:
@@ -89,11 +94,11 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
 
     /// <summary>
     /// Warns if the flags are set to FireAndForget, as this is not supported.
-    /// 
+    /// </summary>
     /// <remarks>
     /// This is a flag that probably predates the async/await pattern, and is not
     /// supported by MomentoRedisClient.
-    /// </summary>
+    /// </remarks>
     /// <param name="flags"></param>
     private void WarnOnFireAndForget(CommandFlags? flags = null)
     {

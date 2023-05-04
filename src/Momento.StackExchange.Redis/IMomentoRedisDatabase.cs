@@ -1,6 +1,12 @@
-﻿using StackExchange.Redis;
+﻿using System;
+using System.Threading.Tasks;
+using StackExchange.Redis;
 namespace Momento.StackExchange.Redis;
 
+/// <summary>
+/// Momento compatiblity interface to <see cref="IDatabase"/>.
+/// This interface lists only those methods that currently implemented.
+/// </summary>
 public interface IMomentoRedisDatabase
 {
     int Database { get; }
