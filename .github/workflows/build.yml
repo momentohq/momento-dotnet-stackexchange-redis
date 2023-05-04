@@ -5,6 +5,19 @@ on:
       - main
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v3
+
+      - name: Verify README generation
+        uses: momentohq/standards-and-practices/github-actions/oss-readme-template@gh-actions-v1
+        with:
+          project_status: official
+          project_stability: alpha
+          project_type: other
+
   test-net6:
     name: Test .NET 6.0
     strategy:
