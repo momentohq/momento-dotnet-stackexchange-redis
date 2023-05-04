@@ -70,6 +70,16 @@ test-net6-redis:
 	@USE_REDIS=1 dotnet test -f net6.0
 
 
+.PHONY: test-momento
+## Run unit and integration tests against Momento
+test-momento: test-net-framework-momento test-net6-momento
+
+
+.PHONY: test-redis
+## Run unit and integration tests against Redis
+test-redis: test-net-framework-redis test-net6-redis
+
+
 .PHONY: precommit
 ## Run clean-build, format, and test as a step before committing.
 precommit: clean-build format test
