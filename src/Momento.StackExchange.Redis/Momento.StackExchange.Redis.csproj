@@ -19,15 +19,15 @@
 		<Authors>Momento</Authors>
 		<Company>Momento Inc</Company>
 		<Description>
-		Momento compatibility client for StackExchange.Redis.
+Momento compatibility client for StackExchange.Redis.
     
-    Use as a drop-in replacement for StackExchange.Redis in your .NET applications
-    to enable automatic scaling and serverless caching with Momento.
+Use as a drop-in replacement for StackExchange.Redis in your .NET applications
+to enable automatic scaling and serverless caching with Momento.
     
-    Momento is a serverless cache that automatically scales without any of the
-		operational overhead required by traditional caching solutions.
+Momento is a serverless cache that automatically scales without any of the
+operational overhead required by traditional caching solutions.
 
-		Check out our examples here: https://github.com/momentohq/momento-dotnet-stackexchange-redis/tree/main/examples
+Check out our examples here: https://github.com/momentohq/momento-dotnet-stackexchange-redis/tree/main/examples
 		</Description>
 		<PackageTags>caching, cache, serverless, key value, simple caching service, distributedcache, redis</PackageTags>
 		<Copyright>Copyright (c) Momento Inc 2023</Copyright>
