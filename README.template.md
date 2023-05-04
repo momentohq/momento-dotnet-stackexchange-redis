@@ -96,7 +96,7 @@ dotnet run -- momento -a $MOMENTO_AUTH_TOKEN -c cache
 
 And the output should look something like this:
 
-```
+```bash
 Using Momento as a backend for StackExchange.Redis, with cache 'cache'
 
 Issuing a 'get' for key 'key', which we have not yet set.
