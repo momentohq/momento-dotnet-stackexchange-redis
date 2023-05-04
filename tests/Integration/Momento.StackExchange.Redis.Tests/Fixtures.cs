@@ -59,7 +59,7 @@ public class DatabaseFixture : IDisposable
 
     private IDatabase InitializeRedis()
     {
-        var configuration = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING") ?? "localhost:6379";
+        var configuration = Environment.GetEnvironmentVariable("TEST_REDIS_ADDRESS") ?? "localhost:6379";
         ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(configuration);
         return redis.GetDatabase();
     }

@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using CommandLine.Text;
+using Microsoft.Extensions.Logging;
 using Momento.Sdk;
 using Momento.Sdk.Auth;
 using Momento.Sdk.Config;
@@ -45,10 +46,12 @@ public class Basic
             var client = CreateMomentoClient(momentoOptions.Token, momentoOptions.DefaultTtl);
             await client.CreateCacheAsync(momentoOptions.Cache);
             db = new MomentoRedisDatabase(client, momentoOptions.Cache);
+            Console.WriteLine($"Using Momento as a backend for StackExchange.Redis, with cache '{momentoOptions.Cache}'");
         });
         options.WithParsed<RedisOptions>((redisOptions) =>
         {
             db = CreateRedisClient(redisOptions.Host, redisOptions.Port);
+            Console.WriteLine($"Using Redis as a backend for StackExchange.Redis, with host '{redisOptions.Host}' and port '{redisOptions.Port}'");
         });
         return db;
     }
@@ -61,7 +64,7 @@ public class Basic
 
     private static ICacheClient CreateMomentoClient(string authToken, TimeSpan defaultTtl)
     {
-        return new CacheClient(Configurations.Laptop.V1(),
+        return new CacheClient(Configurations.Laptop.V1(loggerFactory),
             new StringMomentoTokenProvider(authToken),
             defaultTtl);
     }
@@ -112,4 +115,15 @@ public class Basic
         Console.WriteLine(helpText);
         Environment.Exit(1);
     }
+
+    private static readonly ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+    {
+        builder.AddSimpleConsole(options =>
+        {
+            options.IncludeScopes = true;
+            options.SingleLine = true;
+            options.TimestampFormat = "[HH:mm:ss:fff] ";
+        });
+        builder.SetMinimumLevel(LogLevel.Information);
+    });
 }
