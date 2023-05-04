@@ -1,10 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Build Configuration -->
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+		<!-- Include documentation in build -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>CS1591</NoWarn>
+		<!-- Include source and debug symbols-->
+		<IncludeSource>true</IncludeSource>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<IncludeSymbols>true</IncludeSymbols>
+		<!-- Publish the repository URL in the built .nupkg -->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<!-- Package metadata -->
+		<PackageId>Momento.StackExchange.Redis</PackageId>
+		<Authors>Momento</Authors>
+		<Company>Momento Inc</Company>
+		<Description>
+		Momento compatibility client for StackExchange.Redis.
+    
+    Use as a drop-in replacement for StackExchange.Redis in your .NET applications
+    to enable automatic scaling and serverless caching with Momento.
+    
+    Momento is a serverless cache that automatically scales without any of the
+		operational overhead required by traditional caching solutions.
+
+		Check out our examples here: https://github.com/momentohq/momento-dotnet-stackexchange-redis/tree/main/examples
+		</Description>
+		<PackageTags>caching, cache, serverless, key value, simple caching service, distributedcache, redis</PackageTags>
+		<Copyright>Copyright (c) Momento Inc 2023</Copyright>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/momentohq/momento-dotnet-stackexchange-redis</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/momentohq/momento-dotnet-stackexchange-redis</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using System.Threading.Tasks;
+using StackExchange.Redis;
 
 namespace Momento.StackExchange.Redis;
 
