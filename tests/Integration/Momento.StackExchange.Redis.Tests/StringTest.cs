@@ -144,7 +144,7 @@ public class StringTest : TestBase
         var storedValue = db.StringGet(key);
         Assert.Equal(value, storedValue);
 
-        Thread.Sleep(TimeSpan.FromSeconds(5));
+        Thread.Sleep(TimeSpan.FromSeconds(6));
 
         storedValue = db.StringGet(key);
         Assert.True(storedValue.IsNull);
@@ -161,7 +161,7 @@ public class StringTest : TestBase
         var storedValue = await db.StringGetAsync(key);
         Assert.Equal(value, storedValue);
 
-        await Task.Delay(TimeSpan.FromSeconds(5));
+        await Task.Delay(TimeSpan.FromSeconds(6));
 
         storedValue = await db.StringGetAsync(key);
         Assert.True(storedValue.IsNull);

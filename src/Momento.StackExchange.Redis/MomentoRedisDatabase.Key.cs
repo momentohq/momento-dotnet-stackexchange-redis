@@ -96,42 +96,70 @@ public sealed partial class MomentoRedisDatabase : IDatabase
 
     public bool KeyExpire(RedisKey key, TimeSpan? expiry, CommandFlags flags)
     {
-        throw BuildCommandNotImplementedException("KeyExpire");
+        return AwaitTaskAndUnwrapException(KeyExpireAsync(key, expiry, flags));
     }
 
     public bool KeyExpire(RedisKey key, TimeSpan? expiry, ExpireWhen when = ExpireWhen.Always, CommandFlags flags = CommandFlags.None)
     {
-        throw BuildCommandNotImplementedException("KeyExpire");
+        return AwaitTaskAndUnwrapException(KeyExpireAsync(key, expiry, when, flags));
     }
 
     public bool KeyExpire(RedisKey key, DateTime? expiry, CommandFlags flags)
     {
-        throw BuildCommandNotImplementedException("KeyExpire");
+        return AwaitTaskAndUnwrapException(KeyExpireAsync(key, expiry, flags));
     }
 
     public bool KeyExpire(RedisKey key, DateTime? expiry, ExpireWhen when = ExpireWhen.Always, CommandFlags flags = CommandFlags.None)
     {
-        throw BuildCommandNotImplementedException("KeyExpire");
+        return AwaitTaskAndUnwrapException(KeyExpireAsync(key, expiry, when, flags));
     }
 
-    public Task<bool> KeyExpireAsync(RedisKey key, TimeSpan? expiry, CommandFlags flags)
+    public async Task<bool> KeyExpireAsync(RedisKey key, TimeSpan? expiry, CommandFlags flags)
     {
-        throw BuildCommandNotImplementedException("KeyExpireAsync");
+        return await KeyExpireAsync(key, expiry, flags: flags);
     }
 
-    public Task<bool> KeyExpireAsync(RedisKey key, TimeSpan? expiry, ExpireWhen when = ExpireWhen.Always, CommandFlags flags = CommandFlags.None)
+    public async Task<bool> KeyExpireAsync(RedisKey key, TimeSpan? expiry, ExpireWhen when = ExpireWhen.Always, CommandFlags flags = CommandFlags.None)
     {
-        throw BuildCommandNotImplementedException("KeyExpireAsync");
+        WarnOnFireAndForget(flags);
+        AssertExpireWhenIsAlways(when);
+
+        if (!expiry.HasValue)
+        {
+            return false;
+        }
+        else if (expiry <= TimeSpan.Zero)
+        {
+            return await KeyDeleteAsync(key, flags);
+        }
+
+        var response = await Client.UpdateTtlAsync(CacheName, (string)key!, expiry.Value);
+        if (response is CacheUpdateTtlResponse.Set)
+        {
+            return true;
+        }
+        else if (response is CacheUpdateTtlResponse.Miss)
+        {
+            return false;
+        }
+        else if (response is CacheUpdateTtlResponse.Error error)
+        {
+            throw ConvertMomentoErrorToRedisException(error);
+        }
+        else
+        {
+            throw CreateUnexpectedResponseException(response);
+        }
     }
 
-    public Task<bool> KeyExpireAsync(RedisKey key, DateTime? expiry, CommandFlags flags)
+    public async Task<bool> KeyExpireAsync(RedisKey key, DateTime? expiry, CommandFlags flags)
     {
-        throw BuildCommandNotImplementedException("KeyExpireAsync");
+        return await KeyExpireAsync(key, expiry, flags: flags);
     }
 
-    public Task<bool> KeyExpireAsync(RedisKey key, DateTime? expiry, ExpireWhen when = ExpireWhen.Always, CommandFlags flags = CommandFlags.None)
+    public async Task<bool> KeyExpireAsync(RedisKey key, DateTime? expiry, ExpireWhen when = ExpireWhen.Always, CommandFlags flags = CommandFlags.None)
     {
-        throw BuildCommandNotImplementedException("KeyExpireAsync");
+        return await KeyExpireAsync(key, expiry - DateTime.Now, when, flags);
     }
 
     public DateTime? KeyExpireTime(RedisKey key, CommandFlags flags = CommandFlags.None)
