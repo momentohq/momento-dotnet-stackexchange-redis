@@ -37,7 +37,7 @@ Check out our examples here: https://github.com/momentohq/momento-dotnet-stackex
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Momento.Sdk" Version="1.11.1" />
+    <PackageReference Include="Momento.Sdk" Version="1.12.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.104" />
 
     <!-- Propagated from StackExchange.Redis; built into .NET core now.
