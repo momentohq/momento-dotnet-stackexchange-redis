@@ -1,8 +1,8 @@
 {{ ossHeader }}
 
-# Momento StackExchange.Redis compatibility client
+# Momento StackExchange.Redis Compatibility Client
 
-## What and why?
+## What and Why?
 
 This project provides a Momento-backed implementation of [StackExchange.Redis](https://github.com/StackExchange/StackExchange.Redis)
 The goal is to provide a drop-in replacement for [StackExchange.Redis](https://github.com/StackExchange/StackExchange.Redis) so that you can
@@ -76,7 +76,7 @@ To run these examples, you will need a Momento auth token. You can generate one 
 
 The examples will utlize your auth token via the environment variable `MOMENTO_AUTH_TOKEN` you set.
 
-### Basic example
+### Basic Example
 
 In the [`examples/Basic`](./examples/Basic) directory, you will find a simple CLI app that does some basic sets and gets
 on string values. You can pass the `momento` verb to run against Momento, or the `redis` verb to run against
