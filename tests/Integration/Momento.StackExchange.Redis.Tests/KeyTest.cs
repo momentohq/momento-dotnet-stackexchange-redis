@@ -251,7 +251,7 @@ public class KeyTest : TestBase
         var expireResult = db.KeyExpire(key, DateTime.Now.AddSeconds(2));
         Assert.True(expireResult);
 
-        Thread.Sleep(2000);
+        Thread.Sleep(3000);
 
         var getResult = db.StringGet(key);
         Assert.True(getResult.IsNull);
@@ -268,7 +268,7 @@ public class KeyTest : TestBase
         var expireResult = await db.KeyExpireAsync(key, DateTime.Now.AddSeconds(2));
         Assert.True(expireResult);
 
-        await Task.Delay(2000);
+        await Task.Delay(3000);
 
         var getResult = await db.StringGetAsync(key);
         Assert.True(getResult.IsNull);
