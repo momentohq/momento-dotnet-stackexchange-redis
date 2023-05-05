@@ -123,6 +123,14 @@ public sealed partial class MomentoRedisDatabase : IDatabase, IMomentoRedisDatab
         }
     }
 
+    private void AssertExpireWhenIsAlways(ExpireWhen when)
+    {
+        if (when != ExpireWhen.Always)
+        {
+            throw BuildCommandNotImplementedException($"KeyExpireAsync with when={when}");
+        }
+    }
+
     public void Dispose()
     {
         Client.Dispose();

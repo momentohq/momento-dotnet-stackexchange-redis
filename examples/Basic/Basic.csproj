@@ -1,10 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Momento.StackExchange.Redis\Momento.StackExchange.Redis.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Momento.StackExchange.Redis" Version="0.1.0" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
   </ItemGroup>
